@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "m3WrFZCptK1TZMyv47fWXqQ+sTkyIAte34OEJNNDwvs=",
+  "Source": "Mailsentry.io",
+  "BasePath": "_content/Mailsentry.io",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
