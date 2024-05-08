@@ -13,8 +13,8 @@ namespace Mailsentry.io.Controllers
     public class EmailController : ControllerBase
     {
         private readonly IHttpClientFactory _clientFactory;
-        private readonly string xـapiـkey = "{your api key}";
-
+        private readonly string xـapiـkey = "PRODUCTION_KMW5ARA_FJAAWS:WD4F_M1RM_QPENRE5KLVFSWSXFFICXYDS5W";
+        private readonly string base_url = "https://api.mailsentry.io/api/v1/email/verify";
         public EmailController(IHttpClientFactory clientFactory)
         {
             _clientFactory = clientFactory;
@@ -31,7 +31,7 @@ namespace Mailsentry.io.Controllers
             var httpClient = _clientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Add("x-api-key", xـapiـkey);
 
-            var url = $"https://api.mailsentry.io/api/v1/email/verify/bulk?emails={emails}&layers={layers}";
+            var url = $"{base_url}/bulk?emails={emails}&layers={layers}";
             var response = await httpClient.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
@@ -56,7 +56,7 @@ namespace Mailsentry.io.Controllers
             var httpClient = _clientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Add("x-api-key", xـapiـkey);
 
-            var url = $"https://api.mailsentry.io/api/v1/email/verify/instant?email={email}&layers={layers}";
+            var url = $"{base_url}/instant?email={email}&layers={layers}";
             var response = await httpClient.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
@@ -94,7 +94,7 @@ namespace Mailsentry.io.Controllers
             httpClient.DefaultRequestHeaders.Add("x-api-key", xـapiـkey);
 
             // Send request
-            var response = await httpClient.PostAsync("https://api.mailsentry.io/api/v1/email/verify/file", requestContent);
+            var response = await httpClient.PostAsync($"{base_url}/file", requestContent);
 
             if (response.IsSuccessStatusCode)
             {
@@ -104,6 +104,37 @@ namespace Mailsentry.io.Controllers
             else
             {
                 return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+            }
+        }
+        [HttpGet("{reportId}")]
+        public async Task<IActionResult> GetResult(string reportId, int page = 1, int limit = 10)
+        {
+            try
+            {
+                var url = $"{base_url}/result/{reportId}?page={page}&limit={limit}";
+
+                var httpClient = _clientFactory.CreateClient();
+
+                // Set the x-api-key header
+                httpClient.DefaultRequestHeaders.Add("x-api-key", xـapiـkey);
+
+                // Send the GET request
+                var response = await httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var resultContent = await response.Content.ReadAsStringAsync();
+                    return Ok(resultContent);
+                }
+                else
+                {
+                    return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Log or handle the exception
+                return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
     }
